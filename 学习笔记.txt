@@ -1,0 +1,54 @@
+关于网格的理解
+
+网格域指针和面指针
+cellthread *cellthread
+facethread *facethread
+
+这两个是指针类型的数据 我猜测是为了区分不同的域的类型划分的
+
+然后整型类型的数据
+cell_t cell
+face_t face
+可以理解为每一个网格的变量名
+
+thread_loop_c
+thread_loop_f
+属于宏 开始对整个域domain来循环遍历
+遍历得到的结果为 cellthread和facethread
+
+随后是每个指针指向的网格域内的网格遍历和面的遍历
+宏为 begin_c_loop和begin_f_loop
+在的到指针后 开始在指针指向的网格域内部开始遍历 
+循环变量为cell或者face
+类型为cell_t face_t 
+
+一些宏的参数 获取相关物理量的宏
+C_T(c,t); cell_t c ,thread *t //获取网格的温度 需要网格名和指针信息
+网格和面不同的宏在于
+C_Volume F_Area //网格有体积 面有面积
+
+坐标宏和面积宏
+X[ND-ND]
+A[ND_ND] 属于fluent自己定义的数组
+Area[A,face,facethread] 
+其中包含三项 面的向量（针对曲面） 面的名称 和 指针
+其中A是一个数组 
+包含有A[0] A[1] A[2]
+分别是面在xyz三个方向的投影
+求这个向量的模可以有
+real area;//定义一个实数类型的
+area=NV_MAG(A);这个宏是求面积的模
+
+坐标位置求解 
+F_CENTEROID(X,face,facethread)
+C_CENTEROID(X,cell,cellthread)
+X[0] X[1] X[2] 分别是xyz的坐标
+这个命令执行后 将xyz坐标存放在X这个数组中
+
+后续的坐标输出
+Message("%d",X[0])
+
+fluent的求解流程
+DEFINE_ADJUST//迭代前进行
+DEFINE_ADJUST(name,d);//symbol name ,Domain *d 是定义宏的名字和这个计算域的指针
+
